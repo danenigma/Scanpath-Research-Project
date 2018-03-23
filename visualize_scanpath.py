@@ -89,5 +89,8 @@ if __name__=='__main__':
 	stimulus   = np.asarray(Image.open('png/test.jpeg'))
 	#scanpath = get.scanpath(DATASET_NAME, STIMULUS_NAME, subject)
 	scan       = np.load('png/test.npy')
-
+	scan_original = np.load('png/original_test.npy')
 	scanpath(stimulus, scan)
+	
+	scanpath(stimulus, scan_original)
+	
