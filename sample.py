@@ -103,9 +103,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--image', type=str, required=True,
                         help='input image for generating caption')
-    parser.add_argument('--encoder_path', type=str, default='./models/encoder-1-1.pkl',
+    parser.add_argument('--encoder_path', type=str, default='./models/encoder-1-15.pkl',
                         help='path for trained encoder')
-    parser.add_argument('--decoder_path', type=str, default='./models/decoder-1-1.pkl',
+    parser.add_argument('--decoder_path', type=str, default='./models/decoder-1-15.pkl',
                         help='path for trained decoder')
     # Model parameters (should be same as paramters in train.py)
     parser.add_argument('--embed_size', type=int , default=256,
