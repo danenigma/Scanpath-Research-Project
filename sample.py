@@ -85,7 +85,7 @@ def main(args):
 	sampled_scanpath = []
 	start = 0.0
 	for scan_index in sampled_ids:
-		fixation = dec.decoder([scan_index], vocab, stats)
+		fixation = decode([scan_index], vocab, stats)
 		end      = start + fixation[0][2]
 		sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
 		print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
