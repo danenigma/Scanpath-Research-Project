@@ -110,7 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_layers', type=int , default=1 ,
                         help='number of layers in lstm')
     
-    parser.add_argument('--num_epochs', type=int, default=5)
+    parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--num_workers', type=int, default=2)
     parser.add_argument('--learning_rate', type=float, default=0.001)
