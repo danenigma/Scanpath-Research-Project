@@ -97,7 +97,7 @@ if __name__ == '__main__':
                         help='path for saving trained models')
     parser.add_argument('--data_dir', type=str, default='data/' ,
                         help='directory for resized images')
-    parser.add_argument('--log_step', type=int , default=1,
+    parser.add_argument('--log_step', type=int , default=2,
                         help='step size for prining log info')
     parser.add_argument('--save_step', type=int , default=1000,
                         help='step size for saving trained models')
