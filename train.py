@@ -89,7 +89,7 @@ def main(args):
 				torch.save(encoder.state_dict(), 
 						   os.path.join(args.model_path, 
 							            'encoder-%d-%d.pkl' %(epoch+1, i+1)))
-			break
+			
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='models/' ,
