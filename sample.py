@@ -15,7 +15,6 @@ def decode(scanpath, vocab, stats):
 	
 		x_idx, y_idx, dur_idx = np.where(vocab == scan)	
 		
-		print('index : ', x_idx, scan)
 		x_mean, x_std = stats[0][x_idx[0]], stats[3][x_idx[0]]
 		y_mean, y_std = stats[1][y_idx[0]], stats[4][y_idx[0]]
 		dur_mean, dur_std = stats[2][dur_idx[0]], stats[5][dur_idx[0]]
@@ -87,7 +86,6 @@ def main(args):
 	start = 0.0
 	for scan_index in sampled_ids:
 		if scan_index != 1 and scan_index != 2:
-			print('scan index new : ', scan_index)
 			fixation = decode([scan_index], vocab, stats)
 			end      = start + fixation[0][2]
 			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
