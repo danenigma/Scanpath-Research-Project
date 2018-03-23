@@ -55,8 +55,6 @@ def main(args):
 	params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 	optimizer = torch.optim.Adam(params, lr=args.learning_rate)
 	total_step = len(data_loader)
-	print('total_steps: ', total_step)
-
 	for epoch in range(args.num_epochs):
 	
 		for i, (images, targets, saliencies, lengths) in enumerate(data_loader):
@@ -83,14 +81,14 @@ def main(args):
 						loss.data[0], np.exp(loss.data[0]))) 
 	
 			# Save the models
-			if (i+1) % args.save_step == 0:
-				torch.save(decoder.state_dict(), 
-						   os.path.join(args.model_path, 
-							            'decoder-%d-%d.pkl' %(epoch+1, i+1)))
-				torch.save(encoder.state_dict(), 
-						   os.path.join(args.model_path, 
-							            'encoder-%d-%d.pkl' %(epoch+1, i+1)))
-			
+		#	if (i+1) % args.save_step == 0:
+	torch.save(decoder.state_dict(), 
+			   os.path.join(args.model_path, 
+				            'decoder-%d-%d.pkl' %(1, 1)))
+	torch.save(encoder.state_dict(), 
+			   os.path.join(args.model_path, 
+				            'encoder-%d-%d.pkl' %(1, 1)))
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='models/' ,
