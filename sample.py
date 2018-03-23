@@ -12,7 +12,7 @@ import decoder as dec
 def decode(scanpath, vocab, stats):
 	output = []
 	for scan in scanpath:
-		if scan != 0 or scan !=1:
+		if scan != 1 or scan !=2:
 			x_idx, y_idx, dur_idx = np.where(vocab == scan)
 			print(x_idx, y_idx, dur_idx)	
 			x_mean, x_std = stats[0][x_idx], stats[3][x_idx]
