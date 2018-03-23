@@ -89,12 +89,10 @@ def main(args):
 			fixation = decode([scan_index], vocab, stats)
 			end      = start + fixation[0][2]
 			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
-			print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
+			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
 			start   += fixation[0][2] 
 
-		#if fixation[0] == 2:#end token
-		#	break
-	print(sampled_scanpath)
+	print(sampled_scanpath.T)
 	np.save('png/test.npy', np.array(sampled_scanpath))
 	image = Image.open(args.image)
 	plt.imshow(np.asarray(image))
