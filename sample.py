@@ -14,7 +14,8 @@ def decode(scanpath, vocab, stats):
 	for scan in scanpath:
 		if scan != 1 or scan !=2:
 			x_idx, y_idx, dur_idx = np.where(vocab == scan)	
-			print('index : ', x_idx[0])
+			
+			print('index : ', x_idx, scan)
 			x_mean, x_std = stats[0][x_idx[0]], stats[3][x_idx[0]]
 			y_mean, y_std = stats[1][y_idx[0]], stats[4][y_idx[0]]
 			dur_mean, dur_std = stats[2][dur_idx[0]], stats[5][dur_idx[0]]
