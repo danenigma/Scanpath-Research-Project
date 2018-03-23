@@ -84,10 +84,10 @@ def main(args):
 		#	if (i+1) % args.save_step == 0:
 	torch.save(decoder.state_dict(), 
 			   os.path.join(args.model_path, 
-				            'decoder-%d-%d.pkl' %(1, 1)))
+				            'decoder-%d-%d.pkl' %(15, 1)))
 	torch.save(encoder.state_dict(), 
 			   os.path.join(args.model_path, 
-				            'encoder-%d-%d.pkl' %(1, 1)))
+				            'encoder-%d-%d.pkl' %(15, 1)))
 	print('saving done')
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
