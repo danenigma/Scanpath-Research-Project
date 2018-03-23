@@ -86,7 +86,7 @@ def main(args):
 	sampled_scanpath = []
 	start = 0.0
 	for scan_index in sampled_ids:
-		if scan_index !=1 or scan_index !=2:
+		if scan_index != 1 and scan_index != 2:
 			print('scan index new : ', scan_index)
 			fixation = decode([scan_index], vocab, stats)
 			end      = start + fixation[0][2]
