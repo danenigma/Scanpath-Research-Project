@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-def scanpath(stimulus, scanpath, subject = 0,STIMULUS_NAME='image', 
+def viz_scanpath(stimulus, scanpath, subject = 0,STIMULUS_NAME='image', 
                        animation = True, wait_time = 5000,
                        putLines = True, putNumbers = True, 
                        plotMaxDim = 1024):
@@ -88,9 +88,12 @@ def scanpath(stimulus, scanpath, subject = 0,STIMULUS_NAME='image',
 if __name__=='__main__':
 	stimulus   = np.asarray(Image.open('png/test.jpeg'))
 	#scanpath = get.scanpath(DATASET_NAME, STIMULUS_NAME, subject)
-	scan       = np.load('png/test.npy')
+	scan          = np.load('png/test.npy')
 	scan_original = np.load('png/original_test.npy')
-	scanpath(stimulus, scan)
+	scan_original_2 = np.load('png/original_test_2.npy')
+	scan_original_3 = np.load('png/original_test_3.npy')
 	
-	scanpath(stimulus, scan_original)
+	viz_scanpath(stimulus, scan)
+	viz_scanpath(stimulus, scan_original)
+	viz_scanpath(stimulus, scan_original_3)
 	
