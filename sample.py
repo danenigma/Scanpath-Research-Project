@@ -95,7 +95,7 @@ def main(args):
 			start   += fixation[0][2] 
 
 	print(np.array(sampled_scanpath).T)
-	np.save('png/' + args.image + '.npy', np.array(sampled_scanpath))
+	np.save(args.image + '.npy', np.array(sampled_scanpath))
 	image = Image.open(args.image)
 	plt.imshow(np.asarray(image))
 	plt.show()
