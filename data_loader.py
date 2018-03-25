@@ -32,11 +32,11 @@ class ScanpathDataset(data.Dataset):
         """
 		subj = np.random.randint(15)
 
-        data_torch  = torch.from_numpy(self.data[index]).transpose(2,1).transpose(1,0).float()
-        image    = data_torch[:3,:,:]
-        saliency = data_torch[3:,:,:]
-        target   = torch.LongTensor(self.labels[index][subj].tolist()) + 1           
-        return image, saliency, target
+		data_torch  = torch.from_numpy(self.data[index]).transpose(2,1).transpose(1,0).float()
+		image    = data_torch[:3,:,:]
+		saliency = data_torch[3:,:,:]
+		target   = torch.LongTensor(self.labels[index][subj].tolist()) + 1           
+		return image, saliency, target
 
     def __len__(self):
         """length of dataset"""
