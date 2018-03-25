@@ -46,6 +46,12 @@ def main(args):
 	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
 			             vocab_size, args.num_layers)
 
+	try:
+		encoder.load_state_dict(torch.load(args.encoder_path))
+		decoder.load_state_dict(torch.load(args.decoder_path))
+	except:
+		print("using new model")
+		
 	if torch.cuda.is_available():
 		encoder.cuda()
 		decoder.cuda()
@@ -99,7 +105,10 @@ if __name__ == '__main__':
                         help='step size for prining log info')
     parser.add_argument('--save_step', type=int , default=1000,
                         help='step size for saving trained models')
-    
+    parser.add_argument('--encoder_path', type=str, default='./models/encoder-15-1.pkl',
+                        help='path for trained encoder')
+    parser.add_argument('--decoder_path', type=str, default='./models/decoder-15-1.pkl',
+                        help='path for trained decoder')
     # Model parameters
     parser.add_argument('--embed_size', type=int , default=256 ,
                         help='dimension of word embedding vectors')
