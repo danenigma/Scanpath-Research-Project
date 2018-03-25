@@ -86,20 +86,7 @@ def viz_scanpath(stimulus, scanpath, subject = 0,STIMULUS_NAME='image',
 	return
 	
 if __name__=='__main__':
-	"""
-	stimulus   = np.asarray(Image.open('png/test.jpeg'))
-	#scanpath = get.scanpath(DATASET_NAME, STIMULUS_NAME, subject)
 	
-	scan          = np.load('png/test.npy')
-	
-	scan_original = np.load('png/original_test.npy')
-	scan_original_2 = np.load('png/original_test_2.npy')
-	scan_original_3 = np.load('png/original_test_3.npy')
-	
-	viz_scanpath(stimulus, scan)
-	viz_scanpath(stimulus, scan_original)
-	viz_scanpath(stimulus, scan_original_3)
-	"""
 	stimulus1 = np.asarray(Image.open('png/test.jpeg'))
 	stimulus2 = np.asarray(Image.open('png/test2.jpeg'))
 	stimulus3 = np.asarray(Image.open('png/test3.jpeg'))
@@ -107,7 +94,6 @@ if __name__=='__main__':
 	
 	scan_orig1 = np.load('png/original_test.npy')
 	scan_predicted1 = np.load('png/test.npy')
-	
 	scan_orig2 = np.load('png/orig_test_2.npy')
 	scan_predicted2 = np.load('png/test2.jpeg.npy')
 	scan_orig3 = np.load('png/orig_test_3.npy')
