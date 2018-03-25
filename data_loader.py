@@ -16,20 +16,20 @@ def to_var(x, volatile=False):
 	return Variable(x, volatile=volatile)
 
 class ScanpathDataset(data.Dataset):
-    """ scanpath dataset """
+	""" scanpath dataset """
 
-    def __init__(self,data, labels, vocab):
-        super(ScanpathDataset, self).__init__()
-        
-        self.data   = data
-        self.labels = labels
-        self.vocab  = vocab
-        print('data size : ', self.data.shape)
+	def __init__(self,data, labels, vocab):
+		super(ScanpathDataset, self).__init__()
+	
+		self.data   = data
+		self.labels = labels
+		self.vocab  = vocab
+		print('data size : ', self.data.shape)
 
-    def __getitem__(self, index):
-        """
-        returns 
-        """
+	def __getitem__(self, index):
+		"""
+		returns 
+		"""
 		subj = np.random.randint(15)
 
 		data_torch  = torch.from_numpy(self.data[index]).transpose(2,1).transpose(1,0).float()
@@ -38,9 +38,9 @@ class ScanpathDataset(data.Dataset):
 		target   = torch.LongTensor(self.labels[index][subj].tolist()) + 1           
 		return image, saliency, target
 
-    def __len__(self):
-        """length of dataset"""
-        return self.data.shape[0]
+	def __len__(self):
+		"""length of dataset"""
+		return self.data.shape[0]
 
 def collate_fn(data):
 	"""Creates mini-batch tensors from the list of tuples (image, caption).
