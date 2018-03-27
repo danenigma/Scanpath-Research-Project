@@ -91,6 +91,7 @@ def main(args):
 	try:
 		encoder.load_state_dict(torch.load(args.encoder_path))
 		decoder.load_state_dict(torch.load(args.decoder_path))
+		print("using pre-trained model")
 	except:
 		print("using new model")
 	
@@ -136,6 +137,7 @@ def main(args):
 			val_loss = validate(encoder, decoder, val_data_loader, criterion)
 			print('val loss: ', val_loss)
 			if val_loss < best_val:
+				best_val = val_loss
 				print("Found new best val")
 				torch.save(decoder.state_dict(), 
 						   os.path.join(args.model_path, 
