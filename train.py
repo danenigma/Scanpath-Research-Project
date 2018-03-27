@@ -134,6 +134,7 @@ def main(args):
 			# Save the models
 		if (epoch+1) % args.save_step == 0:
 			val_loss = validate(encoder, decoder, val_data_loader, criterion)
+			print('val loss: ', val_loss)
 			if val_loss < best_val:
 				print("Found new best val")
 				torch.save(decoder.state_dict(), 
