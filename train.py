@@ -54,10 +54,13 @@ def main(args):
 			 '{}-labels.npy'.format(args.name)),
 			  encoding='latin1')
 			  
+	concat_labels = np.concatenate(labels)
+	
 	split = int(img_data.shape[0]*args.split)
-	
-	print('split: ', split)
-	
+	concat_split = int(concat_labels.shape[0]*args.split)
+
+	print('split: ', split, 'concat split: ', concat_split)
+
 	train_data = img_data[:split]
 	val_data   = img_data[split+1:]
 
@@ -70,31 +73,43 @@ def main(args):
 			 '{}-vocab.npy'.format(args.name)))
 
 	vocab_size  = vocab.reshape(1,-1).shape[1]			 
+
+	train_size  = img_data.shape[0]*15
+	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
+	np.random.shuffle(data_table)
+	print(data_table)
 	train_scanpath_ds = ScanpathDataset(train_data, train_labels, vocab)
 
 	train_data_loader = data.DataLoader(
-				                 train_scanpath_ds, batch_size = args.batch_size,
-				                 sampler = RandomSampler(train_scanpath_ds),
-				                 collate_fn = collate_fn)
+					             train_scanpath_ds, batch_size = args.batch_size,
+					             sampler = RandomSampler(train_scanpath_ds),
+					             collate_fn = collate_fn)
 	val_scanpath_ds = ScanpathDataset(val_data, val_labels, vocab)
 
 	val_data_loader = data.DataLoader(
-				                 val_scanpath_ds, batch_size = args.batch_size,
-				                 sampler = RandomSampler(val_scanpath_ds),
-				                 collate_fn = collate_fn)
-				                 
+					             val_scanpath_ds, batch_size = args.batch_size,
+					             sampler = RandomSampler(val_scanpath_ds),
+					             collate_fn = collate_fn)
+					             
 
 	encoder = EncoderCNN(args.embed_size)
 	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
-				         vocab_size, args.num_layers)
-
+					     vocab_size, args.num_layers)
+	torch.save(decoder.state_dict(), 
+			   os.path.join(args.model_path, 
+							'decoder-%d-%d.pkl' %(15, 1)))
+	torch.save(encoder.state_dict(), 
+			   os.path.join(args.model_path, 
+							'encoder-%d-%d.pkl' %(15, 1)))
+	print('saving done')
+	return
 	try:
 		encoder.load_state_dict(torch.load(args.encoder_path))
 		decoder.load_state_dict(torch.load(args.decoder_path))
 		print("using pre-trained model")
 	except:
 		print("using new model")
-	
+
 	if torch.cuda.is_available():
 		encoder.cuda()
 		decoder.cuda()
@@ -110,7 +125,7 @@ def main(args):
 		encoder.train()
 		decoder.train()
 		for i, (images, targets, saliencies, lengths) in enumerate(train_data_loader):
-	
+
 			# Set mini-batch dataset
 			images = to_var(images, volatile=True)
 			scanpaths = to_var(targets)

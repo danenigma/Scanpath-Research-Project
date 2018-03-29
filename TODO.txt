@@ -1,0 +1,3 @@
+- Freez the lower layers of the CNN
+- K-fold cross-validation
+

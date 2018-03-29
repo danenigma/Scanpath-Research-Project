@@ -42,6 +42,33 @@ class ScanpathDataset(data.Dataset):
 		"""length of dataset"""
 		return self.data.shape[0]
 
+class ScanpathDatasetWithTable(data.Dataset):
+	""" scanpath dataset """
+
+	def __init__(self,data, labels, table, vocab):
+		super(ScanpathDataset, self).__init__()
+	
+		self.data   = data
+		self.labels = labels
+		self.vocab  = vocab
+		self.table  = table
+		
+	def __getitem__(self, index):
+		"""
+		returns 
+		"""
+		#subj = np.random.randint(15)
+		img_index   = self.table[index]
+		data_torch  = torch.from_numpy(self.data[img_index]).transpose(2,1).transpose(1,0).float()
+		image    = data_torch[:3,:,:]
+		saliency = data_torch[3:,:,:]
+		target   = torch.LongTensor(self.labels[index].tolist())           
+		return image, saliency, target
+
+	def __len__(self):
+		"""length of dataset"""
+		return self.table.shape[0]
+
 def collate_fn(data):
 	"""Creates mini-batch tensors from the list of tuples (image, caption).
 
