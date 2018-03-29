@@ -104,7 +104,7 @@ def main(args):
 		sampled_target = []
 		start = 0.0
 		
-		for index, scan_index in enumerate(target_scanpath):
+		for index, scan_index in enumerate(sampled_ids):
 			if scan_index == 3:
 				break
 			if scan_index != 2:
@@ -113,29 +113,16 @@ def main(args):
 					fixation[0][2]*=1000
 					sampled_scanpath.append(fixation[0])
 				except:
-					#print('error') 
 					pass
 					
-		#target_scanpath = decode(target_scanpath, vocab, stats)
-		#print(target_scanpath)
 		if i % 100==0:print('*****[{:d}]*****'.format(i))
 		sampled_scanpath = np.array(sampled_scanpath)
-		#target_scanpaths.append(target_scanpath)
-		#print(sampled_scanpath.shape)
 		scanpaths.append(sampled_scanpath)
 		
-	#print(len(scanpaths))	
 	scanpaths = np.array(scanpaths)
 	
-	sio.savemat('target_scanpaths', {'target_scanpaths': scanpaths})
-	#sio.savemat('target_scanpaths', {'target_scanpaths': target_scanpaths})
+	sio.savemat('pred_scanpaths', {'pred_scanpaths': scanpaths})
 	
-		#print(np.array(sampled_scanpath).T)
-		#np.save(args.image + '.npy', np.array(sampled_scanpath))
-		#image = Image.open(args.image)
-		#plt.imshow(np.asarray(image))
-		#plt.show()
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
