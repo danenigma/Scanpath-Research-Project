@@ -54,18 +54,18 @@ def main(args):
 			 '{}-labels.npy'.format(args.name)),
 			  encoding='latin1')
 			  
-	concat_labels = np.concatenate(labels)
+	labels = np.concatenate(labels)
 	
-	split = int(img_data.shape[0]*args.split)
-	concat_split = int(concat_labels.shape[0]*args.split)
+	#split = int(img_data.shape[0]*args.split)
+	#concat_split = int(concat_labels.shape[0]*args.split)
 
-	print('split: ', split, 'concat split: ', concat_split)
+	#print('split: ', split, 'concat split: ', concat_split)
 
-	train_data = img_data[:split]
-	val_data   = img_data[split+1:]
+	#train_data = img_data[:split]
+	#val_data   = img_data[split+1:]
 
-	train_labels = labels[:split]
-	val_labels   = labels[split+1:]
+	#train_labels = labels[:split]
+	#val_labels   = labels[split+1:]
 	 
 	vocab  = np.load(
 			 os.path.join(
@@ -74,35 +74,35 @@ def main(args):
 
 	vocab_size  = vocab.reshape(1,-1).shape[1]			 
 
-	train_size  = img_data.shape[0]*15
+	#train_size  = img_data.shape[0]*15
 	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
-	np.random.shuffle(data_table)
+	#np.random.shuffle(data_table)
 	print(data_table)
-	train_scanpath_ds = ScanpathDataset(train_data, train_labels, vocab)
+	train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
 
 	train_data_loader = data.DataLoader(
 					             train_scanpath_ds, batch_size = args.batch_size,
 					             sampler = RandomSampler(train_scanpath_ds),
 					             collate_fn = collate_fn)
-	val_scanpath_ds = ScanpathDataset(val_data, val_labels, vocab)
+	#val_scanpath_ds = ScanpathDataset(val_data, val_labels, vocab)
 
-	val_data_loader = data.DataLoader(
-					             val_scanpath_ds, batch_size = args.batch_size,
-					             sampler = RandomSampler(val_scanpath_ds),
-					             collate_fn = collate_fn)
+	#val_data_loader = data.DataLoader(
+	#				             val_scanpath_ds, batch_size = args.batch_size,
+	#				             sampler = RandomSampler(val_scanpath_ds),
+	#				             collate_fn = collate_fn)
 					             
 
 	encoder = EncoderCNN(args.embed_size)
 	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
 					     vocab_size, args.num_layers)
-	torch.save(decoder.state_dict(), 
-			   os.path.join(args.model_path, 
-							'decoder-%d-%d.pkl' %(15, 1)))
-	torch.save(encoder.state_dict(), 
-			   os.path.join(args.model_path, 
-							'encoder-%d-%d.pkl' %(15, 1)))
-	print('saving done')
-	return
+	#torch.save(decoder.state_dict(), 
+	#		   os.path.join(args.model_path, 
+	#						'decoder-%d-%d.pkl' %(15, 1)))
+	#torch.save(encoder.state_dict(), 
+	#		   os.path.join(args.model_path, 
+	#						'encoder-%d-%d.pkl' %(15, 1)))
+	#print('saving done')
+	#return
 	try:
 		encoder.load_state_dict(torch.load(args.encoder_path))
 		decoder.load_state_dict(torch.load(args.decoder_path))
@@ -118,9 +118,9 @@ def main(args):
 	params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 	optimizer = torch.optim.Adam(params, lr=args.learning_rate)
 	total_step = len(train_data_loader)
-	print('validating.....')
-	best_val = validate(encoder, decoder, val_data_loader, criterion)
-	print("starting val loss {:f}".format(best_val))
+	#print('validating.....')
+	#best_val = validate(encoder, decoder, val_data_loader, criterion)
+	#print("starting val loss {:f}".format(best_val))
 	for epoch in range(args.num_epochs):
 		encoder.train()
 		decoder.train()
@@ -149,17 +149,17 @@ def main(args):
 
 			# Save the models
 		if (epoch+1) % args.save_step == 0:
-			val_loss = validate(encoder, decoder, val_data_loader, criterion)
-			print('val loss: ', val_loss)
-			if val_loss < best_val:
-				best_val = val_loss
-				print("Found new best val")
-				torch.save(decoder.state_dict(), 
-						   os.path.join(args.model_path, 
-										'decoder-%d-%d.pkl' %(15, 1)))
-				torch.save(encoder.state_dict(), 
-						   os.path.join(args.model_path, 
-										'encoder-%d-%d.pkl' %(15, 1)))
+#			val_loss = validate(encoder, decoder, val_data_loader, criterion)
+#			print('val loss: ', val_loss)
+#			if val_loss < best_val:
+#				best_val = val_loss
+#			print("Found new best val")
+			torch.save(decoder.state_dict(), 
+					   os.path.join(args.model_path, 
+									'decoder-%d-%d.pkl' %(15, 1)))
+			torch.save(encoder.state_dict(), 
+					   os.path.join(args.model_path, 
+									'encoder-%d-%d.pkl' %(15, 1)))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
