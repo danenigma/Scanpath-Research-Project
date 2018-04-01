@@ -59,7 +59,7 @@ class ScanpathDatasetWithTable(data.Dataset):
 		"""
 		#subj = np.random.randint(15)
 		img_index   = self.table[index]
-		print('img index: ', img_index)
+		print('img index: ', img_index, index)
 		data_torch  = torch.from_numpy(self.data[img_index]).transpose(2,1).transpose(1,0).float()
 		image    = data_torch[:3,:,:]
 		saliency = data_torch[3:,:,:]
