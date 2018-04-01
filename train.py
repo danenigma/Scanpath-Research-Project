@@ -55,7 +55,8 @@ def main(args):
 			  encoding='latin1')
 			  
 	labels = np.concatenate(labels)
-	
+	print('labels shape: ', labels.shape)
+	print('img data: ', img_data.shape)
 	#split = int(img_data.shape[0]*args.split)
 	#concat_split = int(concat_labels.shape[0]*args.split)
 
@@ -77,7 +78,7 @@ def main(args):
 	train_size  = img_data.shape[0]*15
 	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
 	#np.random.shuffle(data_table)
-	print(data_table)
+	print('table: ', data_table, data_table.shape)
 	train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
 
 	train_data_loader = data.DataLoader(
