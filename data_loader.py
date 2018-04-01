@@ -46,7 +46,7 @@ class ScanpathDatasetWithTable(data.Dataset):
 	""" scanpath dataset """
 
 	def __init__(self,data, labels, table, vocab):
-		super(ScanpathDataset, self).__init__()
+		super(ScanpathDatasetWithTable, self).__init__()
 	
 		self.data   = data
 		self.labels = labels
