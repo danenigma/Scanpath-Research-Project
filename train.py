@@ -91,7 +91,7 @@ def main(args):
 	#				             sampler = RandomSampler(val_scanpath_ds),
 	#				             collate_fn = collate_fn)
 					             
-
+	print(len(train_data_loader))
 	encoder = EncoderCNN(args.embed_size)
 	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
 					     vocab_size, args.num_layers)
