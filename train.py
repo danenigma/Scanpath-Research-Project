@@ -74,7 +74,7 @@ def main(args):
 
 	vocab_size  = vocab.reshape(1,-1).shape[1]			 
 
-	#train_size  = img_data.shape[0]*15
+	train_size  = img_data.shape[0]*15
 	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
 	#np.random.shuffle(data_table)
 	print(data_table)
