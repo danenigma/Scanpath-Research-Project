@@ -13,8 +13,8 @@ def get_scanpath(file_path):
 	start_token = 1
 	end_token   = 2
 
-	vocab    = np.load('data/MIT1003-vocab.npy', encoding='latin1')
-	binedges = np.load('data/MIT1003-binedges.npy', encoding='latin1')
+	vocab    = np.load('data/MIT1003-vocab.numpy', encoding='latin1')
+	binedges = np.load('data/MIT1003-binedges.numpy', encoding='latin1')
 	
 	scanpath_file = open(file_path)
 	scanpath_file_lines = scanpath_file.readlines()
