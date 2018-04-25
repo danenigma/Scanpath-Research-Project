@@ -32,6 +32,8 @@ def validate(encoder, decoder, data_loader, criterion):
 
 		loss = criterion(outputs, scanpaths_packed)
 		val_loss = loss.data.sum()
+		if i%100==0:
+			print('[index {}]'.format(i))
 	return val_loss
     
 def main(args):
@@ -118,7 +120,7 @@ def main(args):
 
 			# Save the models
 		if (epoch+1) % args.save_step == 0:
-			val_loss = validate(encoder, decoder, val_data_loader, criterion)
+			val_loss = validate(encoder, decoder, val_loader, criterion)
 			print('val loss: ', val_loss)
 			if val_loss < best_val:
 				best_val = val_loss
@@ -138,7 +140,7 @@ if __name__ == '__main__':
                         help='directory for resized images')
     parser.add_argument('--log_step', type=int , default=2,
                         help='step size for prining log info')
-    parser.add_argument('--save_step', type=int , default=5,
+    parser.add_argument('--save_step', type=int , default=1,
                         help='step size for saving trained models')
     parser.add_argument('--encoder_path', type=str, default='./models/encoder-15-1.pkl',
                         help='path for trained encoder')
