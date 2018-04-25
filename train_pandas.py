@@ -85,7 +85,7 @@ def main(args):
 		decoder.cuda()
 	# Loss and Optimizer
 	criterion = nn.CrossEntropyLoss()
-	params = list(decoder.parameters()) + list(encoder.parameters()))
+	params = list(decoder.parameters()) + list(encoder.parameters())
 	optimizer  = torch.optim.Adam(params, lr=args.learning_rate)
 	total_step = len(train_loader)
 	print('validating.....')
