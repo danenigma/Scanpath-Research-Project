@@ -80,7 +80,6 @@ def main(args):
 	sampled_ids = decoder.sample(feature)
 	sampled_ids = sampled_ids.cpu().data.numpy()
 	print(sampled_ids)
-
 	# Decode word_ids to words
 	sampled_scanpath = []
 	start = 0.0

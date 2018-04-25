@@ -2,6 +2,8 @@ import argparse
 import torch
 import torch.nn as nn
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import os
 import pickle
 from models import EncoderCNN, DecoderRNN 
@@ -9,186 +11,106 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence
 from torchvision import transforms
 from data_loader import *
+from multimatch_data_loader import *
+import scipy.io as sio
 
 def to_var(x, volatile=False):
     if torch.cuda.is_available():
         x = x.cuda()
     return Variable(x, volatile=volatile)
-def validate(encoder, decoder, data_loader, criterion):
-	val_size = len(data_loader)
-	val_loss = 0
-	encoder.eval()
-	decoder.eval()
-
-	for i, (images, targets, saliencies, lengths) in enumerate(data_loader):
-
-		# Set mini-batch dataset
-		images = to_var(images, volatile=True)
-		scanpaths = to_var(targets)
-		scanpaths_packed = pack_padded_sequence(scanpaths, lengths, batch_first=True)[0]
-
-		# Forward, Backward and Optimize
-		decoder.zero_grad()
-		encoder.zero_grad()
-		features = encoder(images)
-		outputs = decoder(features, scanpaths, lengths)
-
-		loss = criterion(outputs, scanpaths_packed)
-		val_loss = loss.data.sum()
-	return val_loss/val_size
-    
+def showPlot(points):
+    plt.figure()
+    fig, ax = plt.subplots()
+    # this locator puts ticks at regular intervals
+    loc = ticker.MultipleLocator(base=0.2)
+    ax.yaxis.set_major_locator(loc)
+    plt.plot(points)
+    plt.show()    
 def main(args):
 
 	if not os.path.exists(args.model_path):
 		os.makedirs(args.model_path)
 
-	img_data = np.load(
-				 os.path.join(
-				 args.data_dir,
-				 '{}-feats.npy'.format(args.name))
-				 , encoding='latin1')
-			 
-	labels = np.load(
-			 os.path.join(
-			 args.data_dir,
-			 '{}-labels.npy'.format(args.name)),
-			  encoding='latin1')
-			  
-	concat_labels = np.concatenate(labels)
-	
-	split = int(img_data.shape[0]*args.split)
-	concat_split = int(concat_labels.shape[0]*args.split)
+	batch_size  = args.batch_size
+	train_data  = sio.loadmat('./data/scanpaths.mat')['target_scanpaths'].T
+	labels      = sio.loadmat('./data/multimatch_target.mat')['output']
+	table       = sio.loadmat('./data/multimatch_input.mat')['input']
 
-	print('split: ', split, 'concat split: ', concat_split)
 
-	train_data = img_data[:split]
-	val_data   = img_data[split+1:]
+	print(train_data.shape, labels.shape)
+	train_ds     = MultiMatchDataset(train_data,table, labels)
+	train_loader = data.DataLoader(
+		     train_ds, batch_size = batch_size,
+		     sampler = RandomSampler(train_ds)
+		     )
 
-	train_labels = labels[:split]
-	val_labels   = labels[split+1:]
-	 
-	vocab  = np.load(
-			 os.path.join(
-			 args.data_dir,
-			 '{}-vocab.npy'.format(args.name)))
-
-	vocab_size  = vocab.reshape(1,-1).shape[1]			 
-
-	train_size  = img_data.shape[0]*15
-	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
-	np.random.shuffle(data_table)
-	print(data_table)
-	train_scanpath_ds = ScanpathDataset(train_data, train_labels, vocab)
-
-	train_data_loader = data.DataLoader(
-					             train_scanpath_ds, batch_size = args.batch_size,
-					             sampler = RandomSampler(train_scanpath_ds),
-					             collate_fn = collate_fn)
-	val_scanpath_ds = ScanpathDataset(val_data, val_labels, vocab)
-
-	val_data_loader = data.DataLoader(
-					             val_scanpath_ds, batch_size = args.batch_size,
-					             sampler = RandomSampler(val_scanpath_ds),
-					             collate_fn = collate_fn)
-					             
-
-	encoder = EncoderCNN(args.embed_size)
-	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
-					     vocab_size, args.num_layers)
-	torch.save(decoder.state_dict(), 
-			   os.path.join(args.model_path, 
-							'decoder-%d-%d.pkl' %(15, 1)))
-	torch.save(encoder.state_dict(), 
-			   os.path.join(args.model_path, 
-							'encoder-%d-%d.pkl' %(15, 1)))
-	print('saving done')
-	return
+	model = MultiMatchLoss()
+	print(model)
+	criterion = nn.MSELoss()
 	try:
-		encoder.load_state_dict(torch.load(args.encoder_path))
-		decoder.load_state_dict(torch.load(args.decoder_path))
+		model.load_state_dict(torch.load(args.model_path))
 		print("using pre-trained model")
 	except:
 		print("using new model")
 
 	if torch.cuda.is_available():
-		encoder.cuda()
-		decoder.cuda()
-	# Loss and Optimizer
-	criterion = nn.CrossEntropyLoss()
-	params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
-	optimizer = torch.optim.Adam(params, lr=args.learning_rate)
-	total_step = len(train_data_loader)
-	print('validating.....')
-	best_val = validate(encoder, decoder, val_data_loader, criterion)
-	print("starting val loss {:f}".format(best_val))
-	for epoch in range(args.num_epochs):
-		encoder.train()
-		decoder.train()
-		for i, (images, targets, saliencies, lengths) in enumerate(train_data_loader):
+		model.cuda()
+		criterion.cude()
 
-			# Set mini-batch dataset
-			images = to_var(images, volatile=True)
-			scanpaths = to_var(targets)
-			scanpaths_packed = pack_padded_sequence(scanpaths, lengths, batch_first=True)[0]
+	params     = model.parameters()
+	#print(list(params))
+	optimizer  = torch.optim.Adam(params, lr=args.learning_rate)
+	total_step = len(train_loader)
+	#https://discuss.pytorch.org/t/how-to-implement-accumulated-gradient-in-pytorch-i-e-iter-size-in-caffe-prototxt/2522/4
+	points = []
+	for epoch in range(5):
+		train_loader_iter = iter(train_loader)	
+		for i in range(args.num_epochs):
+			optimizer.zero_grad() 
+			batch_loss_value = 0
+			if i*args.update > 20000-args.update:
+				break
+			for m in range(args.update):
+				(seq_1, seq_2, target) = train_loader_iter.next()
+				seq_1  = to_var(seq_1)
+				seq_2  = to_var(seq_2)
+				target = to_var(target)
+				out    = model(seq_1, seq_2)
+				loss   = criterion(out, target)
+				loss.backward()
+				batch_loss_value += loss.cpu().data.numpy()[0]
 
-			# Forward, Backward and Optimize
-			decoder.zero_grad()
-			encoder.zero_grad()
-			features = encoder(images)
-			outputs = decoder(features, scanpaths, lengths)
-
-			loss = criterion(outputs, scanpaths_packed)
-			loss.backward()
 			optimizer.step()
-
-			# Print log info
+			batch_loss_value = batch_loss_value/args.update
 			if i % args.log_step == 0:
-				print('Epoch [%d/%d], Step [%d/%d], Loss: %.4f, Perplexity: %5.4f'
-					  %(epoch, args.num_epochs, i, total_step, 
-						loss.data[0], np.exp(loss.data[0]))) 
-
-			# Save the models
-		if (epoch+1) % args.save_step == 0:
-			val_loss = validate(encoder, decoder, val_data_loader, criterion)
-			print('val loss: ', val_loss)
-			if val_loss < best_val:
-				best_val = val_loss
-				print("Found new best val")
-				torch.save(decoder.state_dict(), 
-						   os.path.join(args.model_path, 
-										'decoder-%d-%d.pkl' %(15, 1)))
-				torch.save(encoder.state_dict(), 
-						   os.path.join(args.model_path, 
-										'encoder-%d-%d.pkl' %(15, 1)))
+				print('Epoch [%d/%d],  Loss: %.4f'
+				%(i, args.num_epochs, batch_loss_value)) 
+				points.append(batch_loss_value)
+	showPlot(np.array(points))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='models/' ,
+    parser.add_argument('--model_path', type=str, default='models/mulimodel-1-1.pkl' ,
                         help='path for saving trained models')
     parser.add_argument('--data_dir', type=str, default='data/' ,
                         help='directory for resized images')
-    parser.add_argument('--log_step', type=int , default=2,
+    parser.add_argument('--log_step', type=int , default=50,
                         help='step size for prining log info')
-    parser.add_argument('--save_step', type=int , default=5,
+    parser.add_argument('--save_step', type=int , default=1,
                         help='step size for saving trained models')
-    parser.add_argument('--encoder_path', type=str, default='./models/encoder-15-1.pkl',
-                        help='path for trained encoder')
-    parser.add_argument('--decoder_path', type=str, default='./models/decoder-15-1.pkl',
-                        help='path for trained decoder')
-    # Model parameters
     parser.add_argument('--embed_size', type=int , default=256 ,
                         help='dimension of word embedding vectors')
     parser.add_argument('--hidden_size', type=int , default=512 ,
                         help='dimension of lstm hidden states')
     parser.add_argument('--num_layers', type=int , default=1 ,
                         help='number of layers in lstm')
-    
-    parser.add_argument('--num_epochs', type=int, default=15)
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--num_epochs', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=1)
     parser.add_argument('--num_workers', type=int, default=2)
-    parser.add_argument('--learning_rate', type=float, default=0.001)
+    parser.add_argument('--learning_rate', type=float, default=1e-4)
     parser.add_argument('--name', type=str, default='MIT1003')
     parser.add_argument('--split', type=float, default=0.9)
+    parser.add_argument('--update', type=int, default=32)
     
     args = parser.parse_args()
     main(args)

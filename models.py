@@ -74,20 +74,30 @@ class MultiMatchLoss(nn.Module):
 	def __init__(self):
 		super(MultiMatchLoss, self).__init__()
 
-		self.lstm    = nn.LSTM(3, 256, 1, batch_first=True)
-		self.lin1 =  nn.Linear(512, 1024)
-		self.lin2 =  nn.Linear(1024, 1024)
-		self.lin3 =  nn.Linear(1024, 256)
-		self.lin4 =  nn.Linear(256, 5)
-
-	def forward(self, seq1, seq2 , seq1_lens, seq2_lens):
-		#packed_seq1 = pack_padded_sequence(seq1, seq1_lens, batch_first=True)
-		#packed_seq2 = pack_padded_sequence(seq2, seq2_lens, batch_first=True)
-		seq1_h, _   = self.lstm(seq1)         
-		seq2_h, _   = self.lstm(seq2) 
-		out = torch.cat((seq1_h[-1][-1], seq2_h[-1][-1]), 0)
-		out = self.lin4(self.lin3(self.lin2(self.lin1(out.view(-1,512)))))
-		return out
+		self.lstm1   = nn.LSTM(3, 128)
+		self.lstm2   = nn.LSTM(3, 128)
+		
+		self.layers = nn.ModuleList([
+					  nn.Linear(256, 512),
+			          nn.ReLU(),
+					  nn.Linear(512, 512),
+			          nn.ReLU(),
+			          #nn.BatchNorm1d(1024),
+					  nn.Linear(512, 256),
+			          nn.ReLU(),
+			          #nn.BatchNorm1d(256),
+					  nn.Linear(256, 5),
+					  nn.Sigmoid()
+					  ])	
+					  
+	def forward(self, seq1, seq2):
+		seq1_h, _   = self.lstm1(seq1)         
+		seq2_h, _   = self.lstm2(seq2) 
+		#print(seq1_h[0][-1].shape, seq2_h[0][-1].shape)
+		x = torch.cat((seq1_h[0][-1], seq2_h[0][-1]), 0)
+		for layer in self.layers:
+			x = layer(x)
+		return x
 
 
 
