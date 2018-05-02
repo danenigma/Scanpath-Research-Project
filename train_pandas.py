@@ -22,6 +22,7 @@ def validate(encoder, decoder, data_loader, criterion):
 
 	for i, (images, targets, lengths) in enumerate(data_loader):
 		bsz = images.shape[0]
+		
 		# Set mini-batch dataset
 		images = to_var(images, volatile=True)
 		scanpaths = to_var(targets)
@@ -99,6 +100,8 @@ def main(args):
 		for batch_index, (images, targets, lengths) in enumerate(train_loader):
 			# Set mini-batch dataset
 			images = to_var(images, volatile=True)
+			bsz = images.shape[0]
+			
 			scanpaths = to_var(targets)
 			scanpaths_packed = pack_padded_sequence(scanpaths, lengths, batch_first=True)[0]
 
@@ -106,7 +109,7 @@ def main(args):
 			decoder.zero_grad()
 			encoder.zero_grad()
 			#features = encoder(images)
-			features = to_var(torch.zeros(args.batch_size,256))
+			features = to_var(torch.zeros(bsz, 256))
 			outputs  = decoder(features, scanpaths, lengths)
 
 			loss = criterion(outputs, scanpaths_packed)
