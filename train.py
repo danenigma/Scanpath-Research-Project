@@ -14,6 +14,7 @@ def to_var(x, volatile=False):
     if torch.cuda.is_available():
         x = x.cuda()
     return Variable(x, volatile=volatile)
+    
 def validate(encoder, decoder, data_loader, criterion):
 	val_size = len(data_loader)
 	val_loss = 0

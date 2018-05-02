@@ -51,25 +51,35 @@ if __name__=='__main__':
 
 	img_paths = os.listdir(img_dir)
 	data_table = []
+	feat_imgs = []
 	for img_name in img_paths:
+		feat_imgs.append(os.path.join(img_dir, img_name))
 		img_      = img_name.split('.')[0]
+		
 		scanpaths  = os.listdir(os.path.join(scanpath_dir, img_))
 	
 		for scan in scanpaths:
 			data_table.append([os.path.join(img_dir, img_name), os.path.join(scanpath_dir, img_,scan)])
 
 	df = pd.DataFrame(np.array(data_table), columns=['image_path', 'scanpath'])
+	feat_table = pd.DataFrame(np.array(feat_imgs), columns=['image_path'])
+	print(feat_table)
+	#print(df)
 	train_table = df.sample(frac=0.80) #70-30 split
 	val_table   = df[~df['scanpath'].isin(train_table['scanpath'])]
+	
 	train_table_name = 'data/train_table.pkl'
 	val_table_name   = 'data/val_table.pkl'
-
+	main_table_name  = 'data/main_table.pkl'
+	feat_table_name  = 'data/feat_table.pkl'
+	
 	train_table.to_pickle(train_table_name) 
 	val_table.to_pickle(val_table_name)
+	df.to_pickle(main_table_name)
+	feat_table.to_pickle(feat_table_name)
 
-
-	scanpath_path = val_table.iloc[0, 1]
-	print(scanpath_path)
-	trans=get_scanpath(scanpath_path)
-	print(trans)
-
+	scanpath_path = val_table.iloc[:10, 0]
+	#print(scanpath_path)
+	#trans=get_scanpath(scanpath_path)
+	#print(trans)
+	#print(feat_imgs, len(feat_imgs))
