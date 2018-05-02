@@ -23,10 +23,10 @@ def train(dataloader, model, optimizer, criterion, epoch, total_epoch):
 		loss = criterion(predicts, targets)
 		loss.backward()
 		optimizer.step()
-		#if (i+1)%10 == 0:
-		print('Epoch [%d/%d]: [%d/%d], loss: %5.4f, perplexity: %5.4f.'%(epoch, total_epoch,i,
-				                                                             total_step,loss.data[0],
-				                                                             np.exp(loss.data[0])))
+		if (i+1)%10 == 0:
+			print('Epoch [%d/%d]: [%d/%d], loss: %5.4f, perplexity: %5.4f.'%(epoch, total_epoch,i,
+					                                                         total_step,loss.data[0],
+					                                                         np.exp(loss.data[0])))
 
 	
 def test():
