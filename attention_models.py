@@ -57,6 +57,7 @@ class Decoder(nn.Module):
         # N-1-D
         att_full = nn.ReLU()(att_fea + att_h + self.att_bias.view(1, -1, 1))
         att_out = self.att_w(att_full).squeeze(2)
+        print('att_out: ', att_out.shape)
         alpha = nn.Softmax()(att_out)
         # N-L
         context = torch.sum(features * alpha.unsqueeze(2), 1)
