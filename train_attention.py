@@ -16,6 +16,7 @@ def train(dataloader, model, optimizer, criterion, epoch, total_epoch):
 	for i, (features, targets, lengths) in enumerate(dataloader):
 		optimizer.zero_grad()
 		features = to_var(features).transpose(1,2)
+		print('feats: ', features.shape)
 		targets  = to_var(targets)
 		predicts = model(features, targets[:, :-1], [l - 1 for l in lengths])
 		predicts = pack_padded_sequence(predicts, [l-1 for l in lengths], batch_first=True)[0]
