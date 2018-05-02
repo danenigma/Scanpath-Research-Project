@@ -21,13 +21,14 @@ def validate(encoder, decoder, data_loader, criterion):
 	decoder.eval()
 
 	for i, (images, targets, lengths) in enumerate(data_loader):
-
+		bsz = images.shape[0]
 		# Set mini-batch dataset
 		images = to_var(images, volatile=True)
 		scanpaths = to_var(targets)
 		scanpaths_packed = pack_padded_sequence(scanpaths, lengths, batch_first=True)[0]
 
-		features = encoder(images)
+		features = to_var(torch.zeros(bsz,256))#encoder(images)
+		print('feats: ', features.shape)
 		outputs  = decoder(features, scanpaths, lengths)
 
 		loss = criterion(outputs, scanpaths_packed)
@@ -105,8 +106,9 @@ def main(args):
 			# Forward, Backward and Optimize
 			decoder.zero_grad()
 			encoder.zero_grad()
-			features = encoder(images)
-			outputs = decoder(features, scanpaths, lengths)
+			#features = encoder(images)
+			features = to_var(torch.zeros(args.batch_size,256))
+			outputs  = decoder(features, scanpaths, lengths)
 
 			loss = criterion(outputs, scanpaths_packed)
 			loss.backward()
