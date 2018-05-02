@@ -16,7 +16,6 @@ def train(dataloader, model, optimizer, criterion, epoch, total_epoch):
 	for i, (features, targets, lengths) in enumerate(dataloader):
 		optimizer.zero_grad()
 		features = to_var(features).transpose(1,2)
-		print('feats: ', features.shape)
 		targets  = to_var(targets)
 		predicts = model(features, targets[:, :-1], [l - 1 for l in lengths])
 		predicts = pack_padded_sequence(predicts, [l-1 for l in lengths], batch_first=True)[0]
@@ -94,7 +93,7 @@ if __name__ == '__main__':
     # data loader
     parser.add_argument('--feature_path', type=str,
                         default='data/mit1003.pth')
-    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--shuffle', type=bool, default=True)
     parser.add_argument('--num_workers', type=int, default=2)
     # model setting
