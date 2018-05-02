@@ -28,7 +28,6 @@ def validate(encoder, decoder, data_loader, criterion):
 		scanpaths_packed = pack_padded_sequence(scanpaths, lengths, batch_first=True)[0]
 
 		features = to_var(torch.zeros(bsz,256))#encoder(images)
-		print('feats: ', features.shape)
 		outputs  = decoder(features, scanpaths, lengths)
 
 		loss = criterion(outputs, scanpaths_packed)
