@@ -35,8 +35,9 @@ def validate(encoder, decoder, data_loader, criterion):
 		outputs = decoder(features, scanpaths, lengths)
 
 		loss = criterion(outputs, scanpaths_packed)
+		print(loss.data.sum())
 		val_loss += loss.data.sum()
-		
+		break
 	return val_loss/val_size
     
 def main(args):
@@ -131,7 +132,7 @@ def main(args):
 	print('validating.....')
 	best_val = validate(encoder, decoder, val_data_loader, criterion)
 	print("starting val loss {:f}".format(best_val))
-
+	return
 	for epoch in range(args.num_epochs):
 		encoder.train()
 		decoder.train()
