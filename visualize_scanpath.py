@@ -89,24 +89,30 @@ if __name__=='__main__':
 	
 	#stimulus1 = np.asarray(Image.open('png/test.jpeg'))
 	#stimulus2 = np.asarray(Image.open('png/test2.jpeg'))
-	stimulus3 = np.asarray(Image.open('png/test3.jpeg'))
-	stimulus4 = np.asarray(Image.open('png/test4.jpeg'))
-	
+	#stimulus3 = np.asarray(Image.open('png/test3.jpeg'))
+	#stimulus4 = np.asarray(Image.open('png/test4.jpeg'))
+	scanpaths  = np.load('data/scanpaths.npy')
+	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
+		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
+		stimulus  = np.asarray(Image.open(full_name))
+		viz_scanpath(stimulus, scanpaths[i], color=(0,255,0))
+		
+		
 	#scan_orig1 = np.load('png/original_test.npy')
 	#scan_predicted1 = np.load('png/test.npy')
 	#scan_orig2 = np.load('png/orig_test_2.npy')
 	#scan_predicted2 = np.load('png/test2.jpeg.npy')
-	scan_orig3 = np.load('png/orig_test_3.npy')
-	scan_predicted3 = np.load('png/test3.jpeg.npy')
-	scan_orig4 = np.load('png/orig_test_4.npy')
-	scan_predicted4 = np.load('png/test4.jpeg.npy')
+	#scan_orig3 = np.load('png/orig_test_3.npy')
+	#scan_predicted3 = np.load('png/test3.jpeg.npy')
+	#scan_orig4 = np.load('png/orig_test_4.npy')
+	#scan_predicted4 = np.load('png/test4.jpeg.npy')
 	
 	#viz_scanpath(stimulus1, scan_orig1)
 	#viz_scanpath(stimulus1, scan_predicted1, color=(0,255,0))	
 	#viz_scanpath(stimulus2, scan_orig2)
 	#viz_scanpath(stimulus2, scan_predicted2, color=(0,255,0))
-	viz_scanpath(stimulus3, scan_orig3)
-	viz_scanpath(stimulus3, scan_predicted3, color=(0,255,0))
-	viz_scanpath(stimulus4, scan_orig4)
-	viz_scanpath(stimulus4, scan_predicted4, color=(0,255,0))
+	#viz_scanpath(stimulus3, scan_orig3)
+	#viz_scanpath(stimulus3, scan_predicted3, color=(0,255,0))
+	#viz_scanpath(stimulus4, scan_orig4)
+	#viz_scanpath(stimulus4, scan_predicted4, color=(0,255,0))
 	

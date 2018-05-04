@@ -39,7 +39,20 @@ def load_image(image_path):
     
     
     return image
-
+def decode_path(vocab, stats, sampled_ids):
+	sampled_scanpath = []
+	start = 0.0
+	for scan_index in sampled_ids:
+		if scan_index == 3:
+			break
+		if scan_index != 2:
+			fixation = decode([scan_index], vocab, stats)
+			end      = start + fixation[0][2]
+			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
+			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
+			start   += fixation[0][2] 
+	return sampled_scanpath
+	
 def get_scanpath(vocab, stats, encoder, decoder, image_name):
 
 	image = load_image(image_name)
@@ -78,6 +91,12 @@ def main(args):
 			 args.data_dir,
 			 '{}-stat.npy'.format('MIT1003')), encoding='latin1')
 			 
+	labels = np.load(
+			 os.path.join(
+			 args.data_dir,
+			 '{}-labels.npy'.format('MIT1003')),
+			  encoding='latin1')
+
 	vocab_size  = vocab.reshape(1,-1).shape[1]	
 	# Build Models
 	encoder = EncoderCNN(args.embed_size)
@@ -100,12 +119,13 @@ def main(args):
 	# Prepare Image
 	scanpaths = []
 	
-	for img_name in os.listdir('data/FixaTons/MIT1003/STIMULI'):
+	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		scan = get_scanpath(vocab, stats, encoder, decoder, full_name)
-		scanpaths.append(scan)
+		target = decode_path(vocab, stats, labels[i])
+		scanpaths.append([scan, target])
 		print(full_name)
-		
+	
 	np.save('scanpaths.npy', np.array(scanpaths))
 			
 if __name__ == '__main__':
