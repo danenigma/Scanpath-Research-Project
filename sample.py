@@ -65,8 +65,6 @@ def get_scanpath(vocab, stats, encoder, decoder, image_name):
 			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
 			start   += fixation[0][2] 
 
-	print(np.array(sampled_scanpath).T)
-	np.save(image_name + '.npy', np.array(sampled_scanpath))
 	
 def main(args):
 
@@ -100,44 +98,18 @@ def main(args):
 	decoder.eval()  # evaluation mode (BN uses moving mean/variance)
 	
 	# Prepare Image
-
-	get_scanpath(vocab, stats, encoder, decoder, args.image)
-	print('it is new btw')
-	"""
-	image = load_image(args.image)
+	scanpaths = []
 	
-	image = torch.from_numpy(np.array(image)).transpose(1, 2).transpose(0, 1).float()
-	image_tensor = to_var(image.unsqueeze_(0), volatile=True)
-
-
-	# Generate caption from image
-	feature = encoder(image_tensor)
-	sampled_ids = decoder.sample(feature)
-	sampled_ids = sampled_ids.cpu().data.numpy()
-	print(sampled_ids)
-	# Decode word_ids to words
-	sampled_scanpath = []
-	start = 0.0
-	for scan_index in sampled_ids:
-		if scan_index == 3:
-			break
-		if scan_index != 2:
-			fixation = decode([scan_index], vocab, stats)
-			end      = start + fixation[0][2]
-			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
-			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
-			start   += fixation[0][2] 
-
-	print(np.array(sampled_scanpath).T)
-	np.save(args.image + '.npy', np.array(sampled_scanpath))
-	image = Image.open(args.image)
-	plt.imshow(np.asarray(image))
-	plt.show()
-	"""
-
+	for img_name in os.listdir('data/FixaTons/MIT1003/STIMULI'):
+		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
+		scan = get_scanpath(vocab, stats, encoder, decoder, full_name)
+		scanpaths.append(scan)
+		
+	np.save('scanpaths.npy', np.array(scanpaths))
+			
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--image', type=str, required=True,
+    parser.add_argument('--image', type=str,
                         help='input image for generating caption')
     parser.add_argument('--encoder_path', type=str, default='./models/encoder-15-1.pkl',
                         help='path for trained encoder')
