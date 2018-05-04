@@ -125,13 +125,13 @@ def main(args):
 		decoder.cuda()
 	# Loss and Optimizer
 	criterion = nn.CrossEntropyLoss()
-	params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
+	params = list(decoder.parameters()) + list(encoder.parameters())
 	optimizer = torch.optim.Adam(params, lr=args.learning_rate)
 	total_step = len(train_data_loader)
 	print('validating.....')
 	best_val = validate(encoder, decoder, val_data_loader, criterion)
 	print("starting val loss {:f}".format(best_val))
-	
+	#return
 	for epoch in range(args.num_epochs):
 		encoder.train()
 		decoder.train()
