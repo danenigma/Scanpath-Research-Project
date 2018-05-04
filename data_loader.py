@@ -33,7 +33,7 @@ class ScanpathDataset(data.Dataset):
 		"""
 		returns 
 		"""
-		subj = np.random.randint(15)
+		subj = 0#np.random.randint(15)
 
 		data_torch  = torch.from_numpy(self.data[index]).transpose(2,1).transpose(1,0).float()
 		image    = data_torch[:3,:,:]
