@@ -123,7 +123,6 @@ def main(args):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		target = decode_path(vocab, stats, labels[i][0]+1)
 		scan   = get_scanpath(vocab, stats, encoder, decoder, full_name)
-		print(scan)
 		scanpaths.append([scan, target])
 		print(i, full_name)
 		

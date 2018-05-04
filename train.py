@@ -35,9 +35,8 @@ def validate(encoder, decoder, data_loader, criterion):
 		outputs = decoder(features, scanpaths, lengths)
 
 		loss = criterion(outputs, scanpaths_packed)
-		print(loss.data.sum())
 		val_loss += loss.data.sum()
-		break
+		
 	return val_loss/val_size
     
 def main(args):
@@ -83,8 +82,8 @@ def main(args):
 	#np.random.shuffle(data_table)
 	#print('table: ', data_table, data_table.shape)
 	#train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
-	train_scanpath_ds = ScanpathDataset(img_data[103:], labels[103:], vocab)
-	val_scanpath_ds   = ScanpathDataset(img_data[:103], labels[:103], vocab)
+	train_scanpath_ds = ScanpathDataset(img_data[1:], labels[1:], vocab)
+	val_scanpath_ds   = ScanpathDataset(img_data[:1], labels[:1], vocab)
 
 	train_data_loader = data.DataLoader(
 					             train_scanpath_ds, batch_size = args.batch_size,
