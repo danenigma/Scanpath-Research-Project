@@ -104,6 +104,7 @@ def main(args):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		scan = get_scanpath(vocab, stats, encoder, decoder, full_name)
 		scanpaths.append(scan)
+		print(full_name)
 		
 	np.save('scanpaths.npy', np.array(scanpaths))
 			
