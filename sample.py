@@ -51,7 +51,7 @@ def get_scanpath(vocab, stats, encoder, decoder, image_name):
 	feature = encoder(image_tensor)
 	sampled_ids = decoder.sample(feature)
 	sampled_ids = sampled_ids.cpu().data.numpy()
-	print(sampled_ids)
+	#print(sampled_ids)
 	# Decode word_ids to words
 	sampled_scanpath = []
 	start = 0.0
@@ -65,7 +65,7 @@ def get_scanpath(vocab, stats, encoder, decoder, image_name):
 			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
 			start   += fixation[0][2] 
 
-	
+	return np.array(sampled_scanpath)
 def main(args):
 
 	vocab  = np.load(
