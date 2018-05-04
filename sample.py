@@ -69,9 +69,9 @@ def get_scanpath(vocab, stats, encoder, decoder, image_name):
 	sampled_scanpath = []
 	start = 0.0
 	for scan_index in sampled_ids:
-		if scan_index == 3:
+		if scan_index == 2:
 			break
-		if scan_index != 2:
+		if scan_index != 1:
 			fixation = decode([scan_index], vocab, stats)
 			end      = start + fixation[0][2]
 			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
@@ -121,12 +121,13 @@ def main(args):
 	
 	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
+		
+		target = decode_path(vocab, stats, labels[i][0]+1)
 		scan = get_scanpath(vocab, stats, encoder, decoder, full_name)
-		target = decode_path(vocab, stats, labels[i][0])
 		scanpaths.append([scan, target])
 		print(full_name)
-	
-	np.save('scanpaths.npy', np.array(scanpaths))
+		break
+	#np.save('scanpaths.npy', np.array(scanpaths))
 			
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
