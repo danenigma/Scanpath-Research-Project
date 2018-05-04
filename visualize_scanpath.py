@@ -95,8 +95,9 @@ if __name__=='__main__':
 	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		stimulus  = np.asarray(Image.open(full_name))
-		viz_scanpath(stimulus, scanpaths[i], color=(0,255,0))
-		
+		print(scanpaths[i][2])
+		#viz_scanpath(stimulus, scanpaths[i], color=(0,255,0))
+		break
 		
 	#scan_orig1 = np.load('png/original_test.npy')
 	#scan_predicted1 = np.load('png/test.npy')
