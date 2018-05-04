@@ -102,6 +102,7 @@ def main(args):
 	# Prepare Image
 
 	get_scanpath(vocab, stats, encoder, decoder, args.image)
+	print('it is new btw')
 	"""
 	image = load_image(args.image)
 	
