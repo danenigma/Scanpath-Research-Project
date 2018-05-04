@@ -160,8 +160,8 @@ def main(args):
 			#break
 			# Save the models
 		if (epoch+1) % args.save_step == 0:
-#			val_loss = validate(encoder, decoder, val_data_loader, criterion)
-#			print('val loss: ', val_loss)
+			val_loss = validate(encoder, decoder, val_data_loader, criterion)
+			print('val loss: ', val_loss)
 #			if val_loss < best_val:
 #				best_val = val_loss
 #			print("Found new best val")
