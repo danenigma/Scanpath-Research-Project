@@ -126,8 +126,8 @@ def main(args):
 		scan = get_scanpath(vocab, stats, encoder, decoder, full_name)
 		scanpaths.append([scan, target])
 		print(full_name)
-		break
-	#np.save('scanpaths.npy', np.array(scanpaths))
+		
+	np.save('scanpaths.npy', np.array(scanpaths))
 			
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
