@@ -55,7 +55,7 @@ def main(args):
 			 '{}-labels.npy'.format(args.name)),
 			  encoding='latin1')
 			  
-	labels = np.concatenate(labels)
+	#labels = np.concatenate(labels)
 	print('labels shape: ', labels.shape)
 	print('img data: ', img_data.shape)
 	#split = int(img_data.shape[0]*args.split)
@@ -77,10 +77,11 @@ def main(args):
 	vocab_size  = vocab.reshape(1,-1).shape[1]			 
 
 	train_size  = img_data.shape[0]
-	data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
+	#data_table  = np.concatenate(np.array([[x]*15 for x in range (train_size)]))
 	#np.random.shuffle(data_table)
-	print('table: ', data_table, data_table.shape)
-	train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
+	#print('table: ', data_table, data_table.shape)
+	#train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
+	train_scanpath_ds = ScanpathDataset(img_data[103:], labels[103:], vocab)
 
 	train_data_loader = data.DataLoader(
 					             train_scanpath_ds, batch_size = args.batch_size,
@@ -148,7 +149,7 @@ def main(args):
 				print('Epoch [%d/%d], Step [%d/%d], Loss: %.4f, Perplexity: %5.4f'
 					  %(epoch, args.num_epochs, i, total_step, 
 						loss.data[0], np.exp(loss.data[0]))) 
-
+			#break
 			# Save the models
 		if (epoch+1) % args.save_step == 0:
 #			val_loss = validate(encoder, decoder, val_data_loader, criterion)
@@ -162,7 +163,7 @@ def main(args):
 			torch.save(encoder.state_dict(), 
 					   os.path.join(args.model_path, 
 									'encoder-%d-%d.pkl' %(15, 1)))
-
+		#break
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='models/' ,
@@ -186,8 +187,8 @@ if __name__ == '__main__':
                         help='number of layers in lstm')
     
     parser.add_argument('--num_epochs', type=int, default=15)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--num_workers', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--num_workers', type=int, default=1)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--name', type=str, default='MIT1003')
     parser.add_argument('--split', type=float, default=0.9)
