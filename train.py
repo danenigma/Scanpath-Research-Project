@@ -35,7 +35,8 @@ def validate(encoder, decoder, data_loader, criterion):
 		outputs = decoder(features, scanpaths, lengths)
 
 		loss = criterion(outputs, scanpaths_packed)
-		val_loss = loss.data.sum()
+		val_loss += loss.data.sum()
+		
 	return val_loss/val_size
     
 def main(args):
@@ -82,11 +83,17 @@ def main(args):
 	#print('table: ', data_table, data_table.shape)
 	#train_scanpath_ds = ScanpathDatasetWithTable(img_data, labels, data_table, vocab)
 	train_scanpath_ds = ScanpathDataset(img_data[103:], labels[103:], vocab)
+	val_scanpath_ds   = ScanpathDataset(img_data[:103], labels[:103], vocab)
 
 	train_data_loader = data.DataLoader(
 					             train_scanpath_ds, batch_size = args.batch_size,
 					             sampler = RandomSampler(train_scanpath_ds),
 					             collate_fn = collate_fn)
+	val_data_loader = data.DataLoader(
+					             val_scanpath_ds, batch_size = args.batch_size,
+					             sampler = RandomSampler(val_scanpath_ds),
+					             collate_fn = collate_fn)
+
 	#val_scanpath_ds = ScanpathDataset(val_data, val_labels, vocab)
 
 	#val_data_loader = data.DataLoader(
@@ -94,7 +101,7 @@ def main(args):
 	#				             sampler = RandomSampler(val_scanpath_ds),
 	#				             collate_fn = collate_fn)
 					             
-	print(len(train_data_loader))
+	print(len(train_scanpath_ds), len(val_scanpath_ds))
 	encoder = EncoderCNN(args.embed_size)
 	decoder = DecoderRNN(args.embed_size, args.hidden_size, 
 					     vocab_size, args.num_layers)
@@ -121,9 +128,10 @@ def main(args):
 	params = list(decoder.parameters()) + list(encoder.linear.parameters()) + list(encoder.bn.parameters())
 	optimizer = torch.optim.Adam(params, lr=args.learning_rate)
 	total_step = len(train_data_loader)
-	#print('validating.....')
-	#best_val = validate(encoder, decoder, val_data_loader, criterion)
-	#print("starting val loss {:f}".format(best_val))
+	print('validating.....')
+	best_val = validate(encoder, decoder, val_data_loader, criterion)
+	print("starting val loss {:f}".format(best_val))
+
 	for epoch in range(args.num_epochs):
 		encoder.train()
 		decoder.train()
