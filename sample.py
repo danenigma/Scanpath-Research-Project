@@ -124,10 +124,10 @@ def main(args):
 	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		target = decode_path(vocab, stats, labels[i][0]+1)
-		pred = target[1]
-		preds.append(pred)
+		
 		scan   = get_scanpath(vocab, stats, encoder, decoder, full_name)
-		scanpaths.append([scan, target[0]])
+		preds.append(scan[1])
+		scanpaths.append([scan[0], target])
 		print(i, full_name)
 		
 	np.save('scanpaths.npy', np.array(scanpaths))
