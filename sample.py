@@ -68,17 +68,19 @@ def get_scanpath(vocab, stats, encoder, decoder, image_name):
 	# Decode word_ids to words
 	sampled_scanpath = []
 	start = 0.0
+	normal_pred = []
 	for scan_index in sampled_ids:
 		if scan_index == 3:
 			break
 		if scan_index != 2:
 			fixation = decode([scan_index], vocab, stats)
+			normal_pred.append(fixation[0])
 			end      = start + fixation[0][2]
 			sampled_scanpath.append([fixation[0][0],fixation[0][1], start, end])
 			#print([fixation[0][0],fixation[0][1], start, end], fixation[0][2])		
 			start   += fixation[0][2] 
 
-	return np.array(sampled_scanpath)
+	return np.array(sampled_scanpath), np.array(normal_pred)
 def main(args):
 
 	vocab  = np.load(
@@ -118,15 +120,18 @@ def main(args):
 	
 	# Prepare Image
 	scanpaths = []
-	
+	preds = []
 	for i, img_name in enumerate(os.listdir('data/FixaTons/MIT1003/STIMULI')):
 		full_name = os.path.join('data/FixaTons/MIT1003/STIMULI', img_name)
 		target = decode_path(vocab, stats, labels[i][0]+1)
+		pred = target[1]
+		preds.append(pred)
 		scan   = get_scanpath(vocab, stats, encoder, decoder, full_name)
-		scanpaths.append([scan, target])
+		scanpaths.append([scan, target[0]])
 		print(i, full_name)
 		
 	np.save('scanpaths.npy', np.array(scanpaths))
+	np.save('prediction.npy', np.array(preds))
 			
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
